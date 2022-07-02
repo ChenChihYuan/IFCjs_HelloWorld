@@ -120622,29 +120622,60 @@ class IFCLoader extends Loader {
       var ifcURL = URL.createObjectURL(file);
       ifcLoader.load(
             ifcURL,
-            (ifcModel) => scene.add(ifcModel));
+            (ifcModel) => 
+              scene.add(ifcModel));
     },
     false
   );
-  console.log(input);
 
+  
+  // await ifcLoader.ifcManager.setWasmPath("./");
+  // ifcLoader.ifcManager.setupThreeMeshBVH(
+  //   acceleratedRaycast,
+  //   computeBoundsTree,
+  //   disposeBoundsTree
+  // );
+  
+  
+  // function exampleCallback(event) {
+  //   const progress = event.total / event.progress * 100;
+  //   console.log("Progress: ", progress, "%");
+  // }
 
+  // ifcLoader.ifcManager.setOnProgress(exampleCallback);
 
   //Creates the Three.js scene
   const scene = new Scene$1();
 
   //Object to store the size of the viewport
   const size = {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: window.innerWidth /2.01,
+    height: window.innerHeight /2.01,
   };
 
   //Creates the camera (point of view of the user)
   const aspect = size.width / size.height;
-  const camera = new PerspectiveCamera$1(75, aspect);
-  camera.position.z = 15;
-  camera.position.y = 13;
-  camera.position.x = 8;
+  const camera1 = new PerspectiveCamera$1(75, aspect);
+
+  // const camera1 = new THREE.PerspectiveCamera(75, 1, 0.1, 10)
+  const camera2 = new OrthographicCamera$1(-20, 20, 20, -1, 0.1, 10);
+  const camera3 = new OrthographicCamera$1(-20, 20, 20, -1, 0.1, 10);
+  const camera4 = new OrthographicCamera$1(-20, 20, 20, -1, 0.1, 10);
+
+  camera1.position.z = 2;
+  camera2.position.y = 1;
+  camera2.lookAt(new Vector3$1(0, 0, 0));
+  camera3.position.z = 1;
+  camera4.position.x = 1;
+  camera4.lookAt(new Vector3$1(0, 0, 0));
+
+
+  camera1.position.z = 15;
+  camera1.position.y = 13;
+  camera1.position.x = 8;
+
+
+  
 
   //Creates the lights of the scene
   const lightColor = 0xffffff;
@@ -120659,16 +120690,27 @@ class IFCLoader extends Loader {
   scene.add(directionalLight.target);
 
   //Sets up the renderer, fetching the canvas of the HTML
-  const threeCanvas = document.getElementById("three-canvas");
-  const renderer = new WebGLRenderer$1({
-      canvas: threeCanvas,
-      alpha: true
-  });
+  const canvas1 = document.getElementById("three-canvas");
+  const canvas2 = document.getElementById("three-canvas2");
+  const canvas3 = document.getElementById("three-canvas3");
+  const canvas4 = document.getElementById("three-canvas4");
+
+  const renderer1 = new WebGLRenderer$1({canvas: canvas1, alpha: true });
+  const renderer2 = new WebGLRenderer$1({canvas: canvas2, alpha: true });
+  const renderer3 = new WebGLRenderer$1({canvas: canvas3, alpha: true });
+  const renderer4 = new WebGLRenderer$1({canvas: canvas4, alpha: true });
 
 
 
-  renderer.setSize(size.width, size.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer1.setSize(size.width, size.height);
+  renderer2.setSize(size.width, size.height);
+  renderer3.setSize(size.width, size.height);
+  renderer4.setSize(size.width, size.height);
+
+  renderer1.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer2.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer4.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   //Creates grids and axes in the scene
   const grid = new GridHelper$1(50, 30);
@@ -120680,14 +120722,20 @@ class IFCLoader extends Loader {
   scene.add(axes);
 
   //Creates the orbit controls (to navigate the scene)
-  const controls = new OrbitControls(camera, threeCanvas);
+  const controls = new OrbitControls(camera1, canvas1);
   controls.enableDamping = true;
+  
   controls.target.set(-2, 0, 0);
+
+  const controls2 = new OrbitControls(camera2, canvas2);
+  controls2.enableRotate = false;
 
   //Animation loop
   const animate = () => {
     controls.update();
-    renderer.render(scene, camera);
+    controls2.update();
+    //renderer1.render(scene, camera1);
+    render();
     requestAnimationFrame(animate);
   };
 
@@ -120695,9 +120743,30 @@ class IFCLoader extends Loader {
 
   //Adjust the viewport to the size of the browser
   window.addEventListener("resize", () => {
-    size.width = window.innerWidth;
-    size.height = window.innerHeight;
-    camera.aspect = size.width / size.height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(size.width, size.height);
+    size.width = window.innerWidth/2.01;
+    size.height = window.innerHeight/2.01;
+    camera1.aspect = size.width / size.height;
+
+    
+    camera2.aspect = size.width / size.height;
+    camera3.aspect = size.width / size.height;
+    camera4.aspect = size.width / size.height;
+
+    camera1.updateProjectionMatrix();
+    camera2.updateProjectionMatrix();
+    camera3.updateProjectionMatrix();
+    camera4.updateProjectionMatrix();
+
+    renderer1.setSize(size.width, size.height);
+    renderer2.setSize(size.width, size.height);
+    renderer3.setSize(size.width, size.height);
+    renderer4.setSize(size.width, size.height);
+    
   });
+
+  function render() {
+    renderer1.render(scene, camera1);
+    renderer2.render(scene, camera2);
+    renderer3.render(scene, camera3);
+    renderer4.render(scene, camera4);
+  }
