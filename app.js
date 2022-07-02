@@ -22,39 +22,91 @@ import {
   import { IFCLoader } from "web-ifc-three/IFCLoader";
 
   // Sets up the IFC loading
-  const ifcLoader = new IFCLoader();
+  const ifcLoader  = new IFCLoader();
 
- 
+  
+
+  // ifcLoader.IfcManager.setWasmPath("./src");
+  // ifcLoader.setWasmPath("./src");
+
 
   const input = document.getElementById("file-input");
-  input.addEventListener(
-    "change",
-    (changed) => {
+  // input.addEventListener(
+  //   "change",
+  //   (changed) => {
+  //     const file = changed.target.files[0];
+  //     var ifcURL = URL.createObjectURL(file);
+  //     ifcLoader.ifcManager.setWasmPath("./");
+      
+  //     ifcLoader.load(
+  //           ifcURL,
+  //           (ifcModel) => 
+  //             scene.add(ifcModel)
+  //             );
+      
+  //   },
+  //   false
+  // );
+
+
+  
+
+  input.addEventListener('change',
+    async(changed)=>{
       const file = changed.target.files[0];
       var ifcURL = URL.createObjectURL(file);
+      await ifcLoader.ifcManager.setWasmPath("./");
       ifcLoader.load(
-            ifcURL,
-            (ifcModel) => 
-              scene.add(ifcModel));
+        ifcURL,
+        (ifcModel) => 
+          scene.add(ifcModel)
+          );
     },
-    false
+    false,
   );
 
-  
-  // await ifcLoader.ifcManager.setWasmPath("./");
-  // ifcLoader.ifcManager.setupThreeMeshBVH(
-  //   acceleratedRaycast,
-  //   computeBoundsTree,
-  //   disposeBoundsTree
-  // );
-  
-  
-  // function exampleCallback(event) {
-  //   const progress = event.total / event.progress * 100;
-  //   console.log("Progress: ", progress, "%");
-  // }
+  ifcLoader.ifcManager.setupThreeMeshBVH(
+        acceleratedRaycast,
+        computeBoundsTree,
+        disposeBoundsTree);
 
-  // ifcLoader.ifcManager.setOnProgress(exampleCallback);
+    /**
+     *  Select the object that is clicked on
+     */
+
+  // const highlightMaterial = new THREE.MeshPhongMaterial( { color: 0xff00ff, depthTest: false, transparent: true, opacity: 0.3 } );
+
+  // function selectObject( event ) {
+	// 	if ( event.button != 0 ) return;
+	// 	const mouse = new THREE.Vector2();
+	// 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	// 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	// 	const raycaster = new THREE.Raycaster();
+	// 	raycaster.setFromCamera( mouse, camera1);
+	// 	const intersected = raycaster.intersectObjects( scene.children, false );
+	// 	if ( intersected.length ) {
+	// 		const found = intersected[ 0 ];
+	// 		const faceIndex = found.faceIndex;
+	// 		const geometry = found.object.geometry;
+	// 		const id = ifcLoader.ifcManager.getExpressId( geometry, faceIndex );
+	// 		const modelID = found.object.modelID;
+	// 		ifcLoader.ifcManager.createSubset( { modelID, ids: [ id ], scene, removePrevious: true, material: highlightMaterial } );
+	// 		const props = ifcLoader.ifcManager.getItemProperties( modelID, id, true );
+	// 		console.log( props );
+	// 		renderer.render( scene, camera );
+	// 	}
+	// }
+
+  // window.onpointerdown = selectObject;
+
+  
+  
+  function exampleCallback(event) {
+    const progress = event.total / event.progress * 100;
+    console.log("Progress: ", progress, "%");
+  }
+
+  ifcLoader.ifcManager.setOnProgress(exampleCallback);
 
   //Creates the Three.js scene
   const scene = new Scene();

@@ -11,8 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "i": "^0.3.7",
+    "npm": "^8.13.2",
     "three": "^0.141.0",
     "three-mesh-bvh": "^0.5.14",
+    "web-ifc": "^0.0.35",
     "web-ifc-three": "^0.0.117"
   },
   "devDependencies": {
